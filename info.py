@@ -1,8 +1,7 @@
 '''
 Pong OOP
 
-heen en weer via git
-en nu nog een keer naar main pc
+31-08 werkende versie
 
 -> scherm maken (600x600)
 -> middenlijn tekenen met turtle
