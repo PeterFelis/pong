@@ -7,11 +7,10 @@ screen.bgcolor('black')
 screen.tracer(0)
 
 screen.middenlijn = Middenlijn()
+screen.score = Score()
 screen.ball = Ball()
 screen.speler = Speler(-270)
 screen.comp = Comp(270)
-
-screen.score = Score()
 
 
 def go():
