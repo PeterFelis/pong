@@ -1,5 +1,5 @@
 import random
-from turtle import Turtle, Screen
+from turtle import Turtle
 
 
 class Score(Turtle):
@@ -18,10 +18,10 @@ class Score(Turtle):
                    move=False, align="center", font=("Arial", 16, "normal"))
 
 
-class Middenlijn():
+class Middenlijn:
     def __init__(self):
         super().__init__()
-        for i in range(-310, 300, 90):
+        for i in range(-360, 270, 90):
             segment = Turtle()
             segment.shape('square')
             segment.penup()
@@ -35,7 +35,7 @@ class Paddle(Turtle):
         super().__init__()
         self.shape('square')
         self.penup()
-        self.shapesize(3, 0.4)
+        self.shapesize(3, 1)    # 3,04
         self.color('white')
         self.goto(xpos, 0)
         self.speed(0)
@@ -43,7 +43,6 @@ class Paddle(Turtle):
         self.stap = 15
         self.x = 0
         self.y = 0
-        self.getscreen().update()
 
 
 class Speler(Paddle):
@@ -74,10 +73,10 @@ class Speler(Paddle):
             if self.y < -300:
                 self.y = -300
 
-        if self.distance(self.getscreen().ball.pos()) < 30:
-            self.getscreen().ball.kaatsen()
-
         self.goto(self.x, self.y)
+
+
+
         self.getscreen().ontimer(self.move, 25)
 
 
@@ -85,7 +84,6 @@ class Comp(Paddle):
     def __init__(self, xpos):
         super().__init__(xpos)
         self.moving = 'up'
-        self.move()
 
     def move(self):
         y = self.pos()[1]
@@ -98,9 +96,6 @@ class Comp(Paddle):
             self.stap = -abs(self.stap)
 
         self.goto(x, y + self.stap)
-
-        if self.distance(self.getscreen().ball.pos()) < 50:
-            self.getscreen().ball.kaatsen()
 
         self.getscreen().ontimer(self.move, 50)
 
@@ -115,38 +110,61 @@ class Ball(Turtle):
 
         self.shape('circle')
         self.penup()
-        self.shapesize(2, 2)
+        self.shapesize(1, 1)  # 2,2
         self.color('yellow')
-
-        self.move()
 
     def kaatsen(self):
         self.xmove = 1 - self.xmove
 
+    def balreset(self):
+        self.xpos = 0
+        self.ypos = 0
+        self.ymove = random.randint(1, 40) - 20
+        self.xmove = 1 - self.xmove
+        self.getscreen().score.update_score()
+
     def move(self):
         # bal van het scherm
-        if self.xpos > 300 or self.xpos < -300:
-            if self.xpos > 300:
-                self.getscreen().score.speler += 1
-            else:
-                self.getscreen().score.comput += 1
 
-            self.xpos = 0
-            self.ypos = 0
-            self.ymove = random.randint(-15, 15)
-            self.getscreen().score.update_score()
+        if self.xpos > 300:
+            self.getscreen().score.speler += 1
+            self.balreset()
+        elif self.xpos < -300:
+            self.getscreen().score.comput += 1
+            self.balreset()
+
+        # bal tussen paddles
+        # omkeren vert beweging
+        if self.ypos > 280 or self.ypos < -280:
+            self.ymove = -self.ymove
 
         # ball horizontaal verplaatsen
         self.xpos += self.xmove
 
-        #bal tussen paddles
-        #omkeren vert beweging
-        if self.ypos > 280 or self.ypos < -280:
-            self.ymove = -self.ymove
-
-        #ball verticaal verplaatsen
+        # ball verticaal verplaatsen
         self.ypos += self.ymove
+
 
         self.goto(self.xpos, self.ypos)
 
-        self.getscreen().ontimer(self.move, 50)
+
+        # checken of paddle speler geraakt wordt
+        balpos = self.pos()
+
+
+        if balpos[0] < 0:    # speler kaatsen
+            spelerpos = self.getscreen().speler.pos()
+            if abs(abs(balpos[0]) - abs(spelerpos[0])) < 22:  # xpos
+                if abs(balpos[1]) < abs(spelerpos[1])+30 and abs(balpos[1]) > abs(spelerpos[1])-30:    # ypos
+                    self.getscreen().ball.kaatsen()
+
+        if balpos[0] > 0:       #computer kaatsen
+            comppos = self.getscreen().comp.pos()
+            if abs(abs(balpos[0]) - abs(comppos[0])) < 15:  # xpos
+                if abs(balpos[1]) < abs(comppos[1]) + 30 and abs(balpos[1]) > abs(comppos[1]) - 30:  # ypos
+                    self.getscreen().ball.kaatsen()
+
+
+        if not self.getscreen().loopt.pause:
+            self.getscreen().ontimer(self.move, 100)
+
