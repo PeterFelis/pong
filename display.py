@@ -154,14 +154,14 @@ class Ball(Turtle):
 
         if balpos[0] < 0:    # speler kaatsen
             spelerpos = self.getscreen().speler.pos()
-            if abs(abs(balpos[0]) - abs(spelerpos[0])) < 22:  # xpos
-                if abs(balpos[1]) < abs(spelerpos[1])+30 and abs(balpos[1]) > abs(spelerpos[1])-30:    # ypos
+            if balpos[0] - spelerpos[0] < 25 and balpos[0] - spelerpos[0] > 10:  # xpos
+                if abs(balpos[1]) < abs(spelerpos[1])+35 and abs(balpos[1]) > abs(spelerpos[1])-35:    # ypos
                     self.getscreen().ball.kaatsen()
 
         if balpos[0] > 0:       #computer kaatsen
             comppos = self.getscreen().comp.pos()
-            if abs(abs(balpos[0]) - abs(comppos[0])) < 15:  # xpos
-                if abs(balpos[1]) < abs(comppos[1]) + 30 and abs(balpos[1]) > abs(comppos[1]) - 30:  # ypos
+            if abs(abs(balpos[0]) - abs(comppos[0])) < 25:  # xpos
+                if abs(balpos[1]) < abs(comppos[1]) + 35 and abs(balpos[1]) > abs(comppos[1]) - 35:  # ypos
                     self.getscreen().ball.kaatsen()
 
 
